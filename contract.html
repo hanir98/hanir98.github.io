@@ -13,7 +13,7 @@
     <input type="text" id = "entry"></input>
     <Button onclick="setvalue()">새 값으로 저장하기</Button>
     <script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
-    txid : <div id = "pedding"></div>
+    <div id = "result"></div>
 
     <script>
     var contractAddress = '0xf4c54bf58a9186875765322be15bcfca7c918652';
@@ -89,7 +89,7 @@
 
   function setvalue(){
     var newvalue =  document.getElementById('entry').value;
-    contract.SetData(newvalue, function(e,r){ document.getElementById('pending').innerHTML = 'Transition ID: ' + r + '<span id = "pending" style = "color:red;">(pending)</span>';
+    contract.SetData(newvalue, function(e,r){   document.getElementById('result').innerHTML = 'Transaction id: ' + r + '<span id="pending" style="color:red;">(Pending)</span>';
     txid = r;
   });
 

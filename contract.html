@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    컨트랙트 주소: <div id="contractAdd"></div>
+    내어카운트 주소 : <div id='accountAdd'></div>
+    컨트랙트에 저장된 값: <div id='storedata'></div>
+    <Button onclick="getValue()">새로고침</Button>
+    <div id="lastBlock"></div>
+    <input type="text" id = "entry"></input>
+    <Button onclick="setValue()">새 값으로 저장하기</Button>
+    <script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
+
+    <script>
+    var contractAddress = '0xf4c54bf58a9186875765322be15bcfca7c918652';
+    var txid;
+    var contract;
+    var abi = [
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "x",
+				"type": "int256"
+			}
+		],
+		"name": "SetData",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "GetData",
+		"outputs": [
+			{
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+    window.addEventListener('load',function(){
+
+      if (typeof web3 !== 'undefined') {
+    // Use Mist/MetaMask's provider
+    window.web3 = new Web3(web3.currentProvider);
+  } else {
+    console.log('No web3? You should consider trying MetaMask!')
+    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+    window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+  }
+  // Now you can start your app & access web3 freely:
+  startApp();
+  });
+
+  function startApp(){
+      contract  = web3.eth.contract(abi).at(contractAddress);
+      document.getElementById('contractAdd').getLink(contractAddress);
+      web3.eth.getAccounts(function(e,r){
+      document.getElementById('accountAdd').innerHTML = getLink(r[0]);
+  });
+
+    getValue();
+  }
+
+  function getLink(addr){
+       return '<a target="_blank" href=https://testnet.etherscan.io/address/' + addr + '>' + addr +'</a>';
+
+  }
+
+
+  function getValue(){
+    contract.GetData(function(e,r){document.getElementById('storedata').innerHTML = r.toNumber();});
+    web3.eth.getBlockNumber(function(e,r){
+   document.getElementById('lastBlock').innerHTML = r;
+ });
+  }
+
+
+  function setvalue(){
+    var newvalue =  document.getElementById('entry').value;
+    contract.SetData(newvalue, function(e,r){ document.getElementById.innerHTML = 'Transition ID: ' + r + '<span id = "pending" style = "color:red;">(pending)</span>';
+    txid = r;
+  })};
+
+  var filter = web3.eth.filter('latest');
+  filter.watch(function(e,r){
+    getValue();
+    web3.eth.getTransaction(txid , function(e,r){
+
+      if (r != null && r.blockNumber > 0) {
+       document.getElementById('pending').innerHTML = '(기록된 블록: ' + r.blockNumber + ')';
+       document.getElementById('pending').style.cssText ='color:green;';
+       document.getElementById('storedata').style.cssText ='color:green; font-size:300%;';
+       filter.stopWatching();
+     }
+     });
+   });
+
+
+    </script>
+
+  </body>
+</html>

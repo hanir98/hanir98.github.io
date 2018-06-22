@@ -8,7 +8,7 @@
     컨트랙트 주소: <div id="contractAdd"></div>
     내어카운트 주소 : <div id='accountAdd'></div>
     컨트랙트에 저장된 값: <div id='storedata'></div>
-    <Button onclick="getValue()">새로고침</Button>
+  
     현재블록수 : <div id="lastBlock"></div>
     <input type="text" id = "entry"></input>
     <Button onclick="setvalue()">새 값으로 저장하기</Button>
@@ -87,6 +87,8 @@
   }
 
 
+
+
   function setvalue(){
     var newvalue =  document.getElementById('entry').value;
     contract.SetData(newvalue, function(e,r){   document.getElementById('result').innerHTML = 'Transaction id: ' + r + '<span id="pending" style="color:red;">(Pending)</span>';
@@ -107,6 +109,10 @@
      });
    });
 }
+
+  setInterval(function() {
+    getValue()
+  }, 3000);
 
     </script>
 

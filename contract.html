@@ -64,7 +64,7 @@
 
   function startApp(){
       contract  = web3.eth.contract(abi).at(contractAddress);
-      document.getElementById('contractAdd').getLink(contractAddress);
+      document.getElementById('contractAdd') = getLink(contractAddress);
       web3.eth.getAccounts(function(e,r){
       document.getElementById('accountAdd').innerHTML = getLink(r[0]);
   });

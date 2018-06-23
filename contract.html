@@ -6,9 +6,10 @@
   </head>
   <body>
     컨트랙트 주소: <div id="contractAdd"></div>
+    컨트랙트 주소 입력 : <input type="text" id = "entry1"><Button onclick="enter()">컨트랜트 주소 바꾸기</Button>
     내어카운트 주소 : <div id='accountAdd'></div>
     컨트랙트에 저장된 값: <div id='storedata'></div>
-  
+
     현재블록수 : <div id="lastBlock"></div>
     <input type="text" id = "entry"></input>
     <Button onclick="setvalue()">새 값으로 저장하기</Button>
@@ -16,6 +17,7 @@
     <div id = "result"></div>
 
     <script>
+
     var contractAddress = '0xf4c54bf58a9186875765322be15bcfca7c918652';
     var txid;
     var contract;
@@ -62,6 +64,11 @@
   // Now you can start your app & access web3 freely:
   startApp();
   });
+
+  function enter(){
+      contractAddress  = document.getElementById('entry1').value;
+      startApp()
+  }
 
   function startApp(){
       contract  = web3.eth.contract(abi).at(contractAddress);

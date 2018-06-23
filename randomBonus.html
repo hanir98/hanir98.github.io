@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <style>
+      td{
+        font-size: 60px;
+        padding:50px;
+        color:purple;
+        border: solid 1px pink;
+        width: 70px;
+        cursor:pointer;
+
+      }
+
+      td:hover{
+        background-color: #FDFD99;
+        transition: 0.5s;
+      }
+
+      .container{
+
+      }
+
+      table{display:inline-block;
+        text-align: center;
+      margin-left:50px;}
+    </style>
+  </head>
+
+  <body>
+    <script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
+
+    <h1 style="text-align:center;">랜덤 보너스 게임</h1>
+    <div class = 'container'>
+    <div style="float:left;">
+      <h3>랜덤 보너스 게임</h3>
+      랜덤 보너스 게임은 1~9까지의 숫자 카드 중에서<br> 하나를 선택하여 1~100PP 중
+      랜덤으로 지급하는 <br>게임입니다.
+      <h3>게임하는 방법</h3>
+      1. 메타마스크를 설치합니다.<br>
+      2. 메타마스크 실행 후, 계정로그인 하기<br>
+      3. 1~9중의 숫자를 선택하기<br>
+      4. 결과가 나올 때 까지 기다리기<br>
+      5. 결과가 나오면 수령하기 버튼을 클릭<br>
+
+    </div>
+    <table style="float:left;">
+      <tr>
+        <td>1</td><td>2</td><td>3</td>
+      </tr>
+      <tr>
+        <td>4</td><td>5</td><td>6</td>
+      </tr>
+      <tr>
+        <td>7</td><td>8</td><td>9</td>
+      </tr>
+
+    </table>
+    <div style="float:left"><span>컨트랙트 주소</sapn><div id = "contractAdd" style=""></div ><br>
+    <span>내 지갑 주소</span><div id ="accountAdd"></div></div>
+
+  </div>
+    <script>
+
+    var cont = "0xa159722c401f4f0dad57f1795965ac033b290d8b";
+    var contract;
+    var abi =[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "_spender",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "_from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "NewOwner",
+				"type": "address"
+			}
+		],
+		"name": "delegate",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "startgame",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "_totalSupply",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_owner",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "GetNumber",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "random_number",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"name": "totalSupply",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "whoisowner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+
+    function startApp(){
+
+      contract  = web3.eth.contract(abi).at(cont);
+      document.getElementById('contractAdd').innerHTML = cont;
+      web3.eth.getAccounts(function(e,r){
+      document.getElementById('accountAdd').innerHTML = r[0];
+  });
+
+
+    }
+
+    $('td').click(function(){  contract.startgame(function(e,r){
+
+      if(r != null){location.replace("result.html")}else{ alert('거절되었습니다.');
+
+    };});
+
+
+})
+
+
+
+
+
+
+    window.addEventListener('load',function(){
+
+      if (typeof web3 !== 'undefined') {
+    // Use Mist/MetaMask's provider
+    window.web3 = new Web3(web3.currentProvider);
+  } else {
+    console.log('No web3? You should consider trying MetaMask!')
+    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+    window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+  }
+  // Now you can start your app & access web3 freely:
+    startApp();
+  });
+
+
+
+
+
+
+    </script>
+  </body>
+</html>
